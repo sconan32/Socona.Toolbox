@@ -111,6 +111,7 @@
     <Compile Include="Controls\ImageExFailedEventArgs.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\StringToNullableDoubleConverter.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Socona.ToolBox.Uwp.rd.xml" />
