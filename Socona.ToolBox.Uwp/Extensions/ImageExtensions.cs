@@ -46,7 +46,7 @@ namespace Socona.ToolBox.Uwp.Extensions
                 return await decoder.GetSoftwareBitmapAsync();
             }
         }
-        public static async void SaveSoftwareBitmapToFile(this SoftwareBitmap softwareBitmap, StorageFile outputFile)
+        public static async Task SaveSoftwareBitmapToFile(this SoftwareBitmap softwareBitmap, StorageFile outputFile)
         {
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
