@@ -25,7 +25,7 @@ namespace Socona.ToolBox.Specifications
 
         ISpecification<T> OrderBy<TKey>(Expression<Func<T, TKey>> property);
         ISpecification<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> property);
-
-
+        T SatisfyingItemFrom(IQueryable<T> query);
+        IQueryable<T> SatisfyingItemsFrom(IQueryable<T> query);
     }
 }
