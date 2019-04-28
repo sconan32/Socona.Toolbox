@@ -186,6 +186,17 @@ namespace Socona.ToolBox.Windows.Parametrization
 
         public string PlaceHolder => _parameter.PlaceHolder;
 
+        public DisplayStyleEnum DisplayStyle
+        {
+            get
+            {
+                if (typeof(TV) == typeof(bool)) return DisplayStyleEnum.Bool;
+                if (typeof(TV) == typeof(DateTime)) return DisplayStyleEnum.Time;
+                if (typeof(TV) == typeof(Type)) return DisplayStyleEnum.Header;
+                return DisplayStyleEnum.Text;
+            }
+        }
+
         public override string ToString()
         {
             return $"Bindable Proxy of Parameter [{_parameter.ToString()}]";

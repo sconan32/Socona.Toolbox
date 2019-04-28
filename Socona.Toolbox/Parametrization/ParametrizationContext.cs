@@ -36,7 +36,7 @@ namespace Socona.ToolBox.Parametrization
             foreach (var prop in properties)
             {
                 //处理显示声明的参数
-                if (typeof(IParameter).IsAssignableFrom(prop.GetType()))
+                if (typeof(IParameter).IsAssignableFrom(prop.PropertyType))
                 {
                     var para = (IParameter)prop.GetValue(settingModel);
                     AddParameter(para, parentParameter);

@@ -119,7 +119,7 @@ namespace Socona.ToolBox.Parametrization
             }
             else if (type == typeof(bool))
             {
-                result = new IntParameter(oa);
+                result = new BoolParameter(oa);
             }
             else if (type == typeof(DateTime))
             {

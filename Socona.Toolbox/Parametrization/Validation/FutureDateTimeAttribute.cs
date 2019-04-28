@@ -32,7 +32,7 @@ namespace Socona.ToolBox.Parametrization.Validation
                     return ValidationResult.Success;
                 }
             }
-            return new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName)); ;
+            return new ValidationResult(this.FormatErrorMessage(validationContext?.DisplayName ?? string.Empty)); ;
         }
 
     }

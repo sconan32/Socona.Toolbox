@@ -7,5 +7,22 @@ namespace Socona.ToolBox.Windows.Parametrization
 {
     public interface IBindableParameter : IParameter
     {
+
+        DisplayStyleEnum DisplayStyle { get; }
+    }
+
+    public enum DisplayStyleEnum
+    {
+        Text = 0,
+        Bool = 1,
+        DropDown = 2,
+        DropDownText = 3,
+        List = 4,
+        DateTime = 10,
+        Date = 11,
+        Time = 12,
+        Header=99,
     }
 }
+
+

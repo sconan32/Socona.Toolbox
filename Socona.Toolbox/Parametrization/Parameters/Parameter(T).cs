@@ -143,7 +143,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public virtual bool HasCandidates => Candidates.Any();
 
-        public List<T> Candidates { get; }
+        public List<T> Candidates { get; } = new List<T>();
 
         private string _candidatesString;
 
@@ -238,7 +238,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public virtual bool TrySetValue(object obj)
         {
-            if (TryParse(obj, out T valT) && ValidateConstraints(valT))
+            if (TryParse(obj, out T valT) && ValidateConstraints(valT,false))
             {
                 Value = valT;
                 return true;
@@ -271,6 +271,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
                 foreach (var cons in constraints)
                 {
                     cons.Validate(obj, Name);
+                    
                 }
                 return true;
             }
