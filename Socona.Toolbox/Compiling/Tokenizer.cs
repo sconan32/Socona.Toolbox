@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace Socona.ToolBox.Compiling
 {
-    public class Tokenizer
+    public abstract class Tokenizer
     {
-        private string _input;
+        protected string _input;
 
-        private int _idx;
+        protected int _idx;
 
-        private List<TokenizeError> _errors = new List<TokenizeError>();
+        protected List<TokenizeError> _errors = new List<TokenizeError>();
 
         public bool HasError
         {
@@ -30,7 +30,7 @@ namespace Socona.ToolBox.Compiling
             HasNext = true;
         }
         //分析运算符
-        public TokenItem ReadOperator()
+        public virtual TokenItem ReadOperator()
         {
             if (_input[_idx] == ':')
             {
@@ -134,7 +134,7 @@ namespace Socona.ToolBox.Compiling
             }
         }
 
-        public TokenItem ReadString()
+        public virtual TokenItem ReadString()
         {
             string result = "";
             Regex regStr = new Regex(@"[\p{IsCJKUnifiedIdeographs}A-Za-z][\p{IsCJKUnifiedIdeographs}A-Za-z0-9]*", RegexOptions.Compiled);
@@ -147,7 +147,7 @@ namespace Socona.ToolBox.Compiling
             return new TokenItem { Type = TokenType.StringLiteral, TokenString = result, };
         }
 
-        public TokenItem ReadNumber()
+        public virtual TokenItem ReadNumber()
         {
             string result = "";
             Regex regStr = new Regex(@"[+-]?\d+[.]?\d*", RegexOptions.Compiled);
@@ -161,7 +161,7 @@ namespace Socona.ToolBox.Compiling
             return null;
         }
 
-        public TokenItem ReadDate()
+        public virtual TokenItem ReadDate()
         {
 
             Regex[] patterns = {
@@ -188,24 +188,10 @@ namespace Socona.ToolBox.Compiling
             return null;
 
         }
-        public TokenItem NextToken()
-        {
-            while (_idx < _input.Length && (
-                _input[_idx] == ' '
-                || _input[_idx] == '　'
-                || _input[_idx] == '\t'
-                || _input[_idx] == '\n'))
-            { _idx++; }
-            if (_idx >= _input.Length)
-            {
-                _errors.Add(new TokenizeError() { Start = _idx, Length = 0, Type = TokenizeErrorType.IndexOutOfRange });
-                return null;
-            }
-            TokenItem token = ReadOperator() ?? ReadLiteral();
-            return token;
-        }
+        public abstract TokenItem NextToken();
 
-        private TokenItem ReadLiteral()
+
+        protected virtual TokenItem ReadLiteral()
         {
             var token = ReadDate() ?? ReadNumber() ?? ReadString();
             return token;
@@ -213,7 +199,7 @@ namespace Socona.ToolBox.Compiling
 
 
 
-        public void Failback(TokenItem token)
+        public virtual void Failback(TokenItem token)
         {
             _idx -= token.TokenString.Length;
         }

@@ -16,41 +16,40 @@ namespace Socona.ToolBox.Windows.ViewModel
     }
 
 
-    public class NotifyProperty<T>:INotifyPropertyChanged
+    public class NotifyProperty<T> : INotifyPropertyChanged
     {
 
         private string _name;
 
         private T _value;
 
-        private INotifyPropertyChanged _owner;
+        private IRaisePropertyChanged _owner;
 
-    
+
 
         public NotifyProperty(IRaisePropertyChanged owner, string name, T initialValue)
         {
-
+            _owner = owner;
+            _name = name;
+            _value = initialValue;
         }
-        public string Name { get; }
+        public string Name => _name;
 
-        public T Value { get; }
+        public T Value => _value;
 
         public void SetValue(T newValue)
         {
             if (newValue.Equals(_value))
             {
                 _value = newValue;
-               
+                OnPropertyChanged();
             }
         }
 
 
 
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-          add { _owner.PropertyChanged += value; }
-            remove { _owner.PropertyChanged -= value; }
-       }
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         /// <summary>
         ///     Notifies listeners that a property value has changed.
@@ -62,7 +61,7 @@ namespace Socona.ToolBox.Windows.ViewModel
         /// </param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-          //  this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

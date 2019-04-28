@@ -15,10 +15,11 @@ namespace Socona.ToolBox.Compiling
             _context = context;
         }
         public Type FirstDeductedType { get; set; }
-        public Expression GetExpression(string input)
+        public Expression GetExpression()
         {
-            _astree = new AbstractSyntaxTree(input);
-            var expr= _astree.Deduce(_context);
+           
+            _astree = new AbstractSyntaxTree(_context);
+            var expr= _astree.Deduce();
 
             return expr;
         }

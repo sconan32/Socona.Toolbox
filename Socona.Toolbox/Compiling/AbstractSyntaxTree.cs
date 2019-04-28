@@ -12,21 +12,20 @@ namespace Socona.ToolBox.Compiling
 
         private Tokenizer _tokenizer;
 
-        private string _input;
+        private ParserContext _context;
 
         private AstNodeBase _errorNode;
-        public AbstractSyntaxTree(string input)
+        public AbstractSyntaxTree(ParserContext context)
         {
-            _input = input;
-
+            _context = context;
             _errorNode = new BoolConstantAstNode(true);
-            _tokenizer = new Tokenizer(_input);
+            _tokenizer = context.Tokenizer;
             _rootNode = GetOrExpr();
         }
 
-        public Expression Deduce(ParserContext context)
+        public Expression Deduce()
         {
-            return _rootNode.DeductInternal(context);
+            return _rootNode.DeductInternal(_context);
         }
 
         /// <summary>

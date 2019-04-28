@@ -8,8 +8,9 @@ namespace Socona.ToolBox.Compiling
     {
     
         public Dictionary<string ,PropertyMap> Properties { get; set; }
+        public  Tokenizer Tokenizer { get; internal set; }
 
-        public SearchParserContext()
+        public ParserContext()
         {
             Properties = new Dictionary<string, PropertyMap>();
         }

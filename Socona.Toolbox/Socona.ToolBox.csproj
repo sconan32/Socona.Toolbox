@@ -5,13 +5,36 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Chinese\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Reflecting\" />
+    <Compile Remove="Reflecting\**" />
+    <EmbeddedResource Remove="Reflecting\**" />
+    <None Remove="Reflecting\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Parametrization\Parameters\ObjectListParameter.cs" />
+    <Compile Remove="Parametrization\Parameters\ObjectParameter.cs" />
+    <Compile Remove="Parametrization\Parameters\TypeListParameter.cs" />
+    <Compile Remove="Parametrization\Parameters\VectorListParameter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Chinese\" />
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Annotations">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.0.0-preview3-27503-5\data\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Windows.Foundation.FoundationContract">
+      <HintPath>C:\Program Files (x86)\Windows Kits\10\References\10.0.17763.0\Windows.Foundation.FoundationContract\3.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
   </ItemGroup>
 
 </Project>
