@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Socona.ToolBox.Parametrization.Validation
+namespace Socona.ToolBox.Validation
 {
     public class FutureDateTimeAttribute : ValidationAttribute
     {
