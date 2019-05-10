@@ -30,7 +30,7 @@ namespace Socona.Expor.Utilities.Options.Parameters
         ///<param name="optionID">Option ID</param>
         ///<param name="defaultValue">Default value. If <code>null</code>, a new random object
         ///        will be created.</param>
-        public RandomParameter(OptionAttribute optionID, bool isRequired, Random defaultValue, Random[] candidates, ValidationAttribute[] constraints)
+        public RandomParameter(OptionAttribute optionID, bool isRequired, Random defaultValue, IEnumerable<Random> candidates = null, IEnumerable<ValidationAttribute> constraints = null)
             : base(optionID, isRequired, defaultValue, candidates, constraints)
         { }
 

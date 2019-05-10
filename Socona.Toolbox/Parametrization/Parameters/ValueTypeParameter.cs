@@ -22,10 +22,9 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="optionID">the unique id of this parameter</param>
         ///<param name="constraints">the constraints of this parameter</param>
         ///<param name="defaultValue">the default value for this parameter</param>
-        public ValueTypeParameter(OptionAttribute optionID, bool isRequired = false, T? defaultValue = null, T[] candidates = null, params ValidationAttribute[] constraints) :
-            base(optionID, isRequired, defaultValue ?? default)
+        public ValueTypeParameter(OptionAttribute optionID, bool isRequired = false, T? defaultValue = null, IEnumerable<T> candidates = null, IEnumerable<ValidationAttribute> constraints = null) :
+            base(optionID, isRequired, defaultValue ?? default, candidates, constraints)
         {
-
             _hasDefaultValue = (defaultValue != null);
         }
 
@@ -43,9 +42,9 @@ namespace Socona.ToolBox.Parametrization.Parameters
             }
         }
 
-        protected static ValueTypeParameter<T> FromPropertyName(string propertyName, Type inType)            
+        protected static ValueTypeParameter<T> FromPropertyName(string propertyName, Type inType, object defaultValue = null)
         {
-            return (ValueTypeParameter<T>)ParameterFactory.Instance.FromPropertyName(propertyName, inType);
+            return (ValueTypeParameter<T>)ParameterFactory.Instance.FromPropertyName(propertyName, inType, defaultValue);
         }
     }
 

@@ -31,12 +31,14 @@ namespace Socona.ToolBox.Parametrization
             {
                 if (typeof(ISettings).IsAssignableFrom(type))
                 {
-                    var spec = FromAttribute(oa.Single(), type, null);
+                    var vas = attrs.OfType<ValidationAttribute>();
+                    bool isRequired = vas.Any(t => t is RequiredAttribute);
+                    var spec = FromAttribute(oa.Single(), type, isRequired, type, null);
                     if (spec.Name.Length == 0 && spec.FullName.Length == 0)
                     {
                         spec.FullName = type.Name.ToLowerInvariant();
                     }
-                    var vas = attrs.OfType<ValidationAttribute>();
+
                     foreach (var va in vas)
                     {
                         spec.AddConstraint(va);
@@ -57,13 +59,17 @@ namespace Socona.ToolBox.Parametrization
 
         //    }
         //}
-        public bool TryBuildFromProperty(PropertyInfo property, out IParameter parameter)
+        public bool TryBuildFromProperty(PropertyInfo property, out IParameter parameter, object defaultValue = null)
         {
+
+           
             var attrs = property.GetCustomAttributes(true);
             var oa = attrs.OfType<OptionAttribute>();
             if (oa.Count() == 1)
             {
-                var spec = FromAttribute(oa.Single(), property.PropertyType,
+                var vas = attrs.OfType<ValidationAttribute>();
+                bool isRequired = vas.Any(t => t is RequiredAttribute);
+                var spec = FromAttribute(oa.Single(), property.PropertyType, isRequired, defaultValue,
                     property.PropertyType.GetTypeInfo().IsEnum
                         ? Enum.GetNames(property.PropertyType)
                         : Enumerable.Empty<string>());
@@ -71,7 +77,7 @@ namespace Socona.ToolBox.Parametrization
                 {
                     spec.FullName = property.Name.ToLowerInvariant();
                 }
-                var vas = attrs.OfType<ValidationAttribute>();
+
                 foreach (var va in vas)
                 {
                     spec.AddConstraint(va);
@@ -84,14 +90,17 @@ namespace Socona.ToolBox.Parametrization
         }
 
 
-        public IParameter FromPropertyName(string propertyName, Type inType)
+        public IParameter FromPropertyName(string propertyName, Type inType, object defaultValue)
         {
             PropertyInfo property = inType.GetProperty(propertyName);
             var attrs = property.GetCustomAttributes(true);
             var oa = attrs.OfType<OptionAttribute>();
             if (oa.Count() == 1)
             {
-                var spec = FromAttribute(oa.Single(), property.PropertyType,
+                var vas = attrs.OfType<ValidationAttribute>();
+                bool isRequired = vas.Any(t => t is RequiredAttribute);
+
+                var spec = FromAttribute(oa.Single(), property.PropertyType, isRequired, defaultValue,
                     property.PropertyType.GetTypeInfo().IsEnum
                         ? Enum.GetNames(property.PropertyType)
                         : Enumerable.Empty<string>());
@@ -99,7 +108,7 @@ namespace Socona.ToolBox.Parametrization
                 {
                     spec.FullName = property.Name.ToLowerInvariant();
                 }
-                var vas = attrs.OfType<ValidationAttribute>();
+
                 foreach (var va in vas)
                 {
                     spec.AddConstraint(va);
@@ -109,25 +118,25 @@ namespace Socona.ToolBox.Parametrization
             }
             throw new InvalidOperationException();
         }
-        public IParameter FromAttribute(OptionAttribute oa, Type type, IEnumerable<object> candidates)
+        public IParameter FromAttribute(OptionAttribute oa, Type type, bool isRequired, object defaultValue, IEnumerable<object> candidates)
         {
             IParameter result = null;
             if (type == typeof(int))
-            {
-                result = new IntParameter(oa);
-
+            {                
+                result = new IntParameter(oa, isRequired, defaultValue as int?, candidates?.OfType<int>());
+                
             }
             else if (type == typeof(bool))
             {
-                result = new BoolParameter(oa);
+                result = new BoolParameter(oa, isRequired);
             }
             else if (type == typeof(DateTime))
             {
-                result = new DateTimeParameter(oa);
+                result = new DateTimeParameter(oa, isRequired, defaultValue as DateTime?, candidates?.OfType<DateTime>());
             }
             else if (typeof(ISettings).IsAssignableFrom(type))
             {
-                result = new TypeParameter(oa, type);
+                result = new TypeParameter(oa, type, isRequired, defaultValue as Type);
             }
 
             return result;

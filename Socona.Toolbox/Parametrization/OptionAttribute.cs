@@ -11,9 +11,6 @@ namespace Socona.ToolBox.Parametrization
     [AttributeUsage(AttributeTargets.Property|AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class OptionAttribute : Attribute
     {
-        private int min;
-        private int max;
-        private object @default;
         private string helpText;
         private string metaValue;
         private readonly string _fullName;
