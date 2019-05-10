@@ -6,5 +6,6 @@ namespace Socona.ToolBox.Parametrization
 {
     public interface ISettings
     {
+        //string SerializeToJson();
     }
 }

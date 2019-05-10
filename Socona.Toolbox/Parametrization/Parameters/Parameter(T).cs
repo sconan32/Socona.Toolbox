@@ -51,7 +51,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="constraints">the constraints of this parameter, may be empty if there
         ///        are no constraints</param>
         ///<param name="defaultValue">the default value of this parameter (may be null)</param>
-        public Parameter(OptionAttribute optionID, bool isRequired = false, T defaultValue = default, T[] candidates = null, params ValidationAttribute[] constraints)
+        public Parameter(OptionAttribute optionID, bool isRequired = false, T defaultValue = default, IEnumerable<T> candidates = null, IEnumerable<ValidationAttribute> constraints = null)
         {
             option = optionID;
             description = optionID.Description;
@@ -61,6 +61,10 @@ namespace Socona.ToolBox.Parametrization.Parameters
             this.isRequired = isRequired;
             this.defaultValue = defaultValue;
             HasDefaultValue = (defaultValue != default);
+            if (candidates != null)
+            {
+                Candidates.AddRange(candidates);
+            }
             this.isOptional = HasDefaultValue;
             this.constraints = new List<ValidationAttribute>();
             if (constraints != null)

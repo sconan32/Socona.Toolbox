@@ -16,7 +16,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="constraint">parameter constraint</param>
         ///<param name="defaultValue">the default value of the parameter</param>
         public StringParameter(OptionAttribute optionID, bool isRequired = false,
-             string defaultValue = null, string[] candidates = null, params ValidationAttribute[] constraints) :
+             string defaultValue = null, IEnumerable<string> candidates = null, IEnumerable<ValidationAttribute> constraints = null) :
             base(optionID, isRequired, defaultValue, candidates, constraints)
         { }
 

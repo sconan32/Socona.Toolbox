@@ -108,7 +108,7 @@ namespace Socona.ToolBox.Uwp.Controls
         /// <returns>
         /// <see cref="Source" /> 依赖项属性的标识符。
         /// </returns>
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(nameof(Source), typeof(object), typeof(CachedImage), new PropertyMetadata(default(object), OnSourceChanged));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(nameof(Source), typeof(object), typeof(CachedImage), new PropertyMetadata(default, OnSourceChanged));
 
         /// <summary>
         /// 标识 <see cref="Stretch" /> 依赖属性。

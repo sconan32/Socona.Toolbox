@@ -8,7 +8,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
     public class DateTimeParameter : ValueTypeParameter<DateTime>
     {
 
-        public DateTimeParameter(OptionAttribute optionID, bool isRequired = false, DateTime? defaultValue = null, DateTime[] candidates = null, params ValidationAttribute[] constraints)
+        public DateTimeParameter(OptionAttribute optionID, bool isRequired = false, DateTime? defaultValue = null, IEnumerable<DateTime> candidates = null, IEnumerable<ValidationAttribute> constraints = null)
             : base(optionID, isRequired, defaultValue, candidates, constraints)
         { }
 
@@ -26,9 +26,9 @@ namespace Socona.ToolBox.Parametrization.Parameters
             value = default;
             return false;
         }
-        public static new DateTimeParameter FromPropertyName(string propertyName, Type inType)
+        public static new DateTimeParameter FromPropertyName(string propertyName, Type inType, object defaultValue = null)
         {
-            return (DateTimeParameter)ValueTypeParameter<DateTime>.FromPropertyName(propertyName, inType);
+            return (DateTimeParameter)ValueTypeParameter<DateTime>.FromPropertyName(propertyName, inType, defaultValue);
         }
 
     }

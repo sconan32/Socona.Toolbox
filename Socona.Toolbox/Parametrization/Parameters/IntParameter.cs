@@ -14,7 +14,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="optionID">optionID the unique id of the option</param>
         ///<param name="constraints">the constraint for this integer parameter</param>
         ///<param name="defaultValue">the default value</param>
-        public IntParameter(OptionAttribute optionID, bool isRequired = false, int? defaultValue = null, int[] candidates =null, params ValidationAttribute[] constraints) :
+        public IntParameter(OptionAttribute optionID, bool isRequired = false, int? defaultValue = null, IEnumerable<int> candidates = null, IEnumerable<ValidationAttribute> constraints = null) :
             base(optionID, isRequired, defaultValue ?? 0, candidates, constraints)
         {
             _hasDefaultValue = (defaultValue != null);
@@ -28,7 +28,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
                 return true;
             }
             if (int.TryParse(obj.ToString(), out value))
-            {            
+            {
                 return true;
             }
             value = default;
