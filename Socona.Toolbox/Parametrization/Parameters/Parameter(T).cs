@@ -41,6 +41,8 @@ namespace Socona.ToolBox.Parametrization.Parameters
         /// </summary>
         protected T _value;
 
+        protected List<string> _validationErrors = new List<string>();
+        public IEnumerable<string> ValidateErrors => _validationErrors;
         ///<summary>
         /// Constructs a parameter with the given optionID, constraints, and default
         /// value.
@@ -59,6 +61,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
             this.isRequired = isRequired;
             this.defaultValue = defaultValue;
             HasDefaultValue = (defaultValue != default);
+            this.isOptional = HasDefaultValue;
             this.constraints = new List<ValidationAttribute>();
             if (constraints != null)
             {
@@ -102,6 +105,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
             if (HasDefaultValue)
             {
                 Value = defaultValue;
+                GivenValue = defaultValue;
                 isDefaultValue = true;
                 return true;
             }
@@ -238,12 +242,13 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public virtual bool TrySetValue(object obj)
         {
-            if (TryParse(obj, out T valT) && ValidateConstraints(valT,false))
+            _validationErrors.Clear();
+            if (TryParse(obj, out T valT) && ValidateConstraints(valT, false))
             {
                 Value = valT;
                 return true;
             }
-
+            _validationErrors.Add("给定的值不合法");
             IsValid = false;
             return false;
         }
@@ -266,24 +271,22 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         protected virtual bool ValidateConstraints(T obj, bool throwIfFailed = true)
         {
-            try
+
+            foreach (var cons in constraints)
             {
-                foreach (var cons in constraints)
+                var result = cons.GetValidationResult(obj, new ValidationContext(this));
+                if (result != ValidationResult.Success)
                 {
-                    cons.Validate(obj, Name);
-                    
-                }
-                return true;
-            }
-            catch (ValidationException e)
-            {
-                if (throwIfFailed)
-                {
-                    throw new InvalidParameterValueException("Specified parameter value for parameter \"" + Name +
-                                                           "\" breaches parameter constraint.\n" + e.Message);
+                    _validationErrors.Add(result.ErrorMessage);
+                    if (throwIfFailed)
+                    {
+                        throw new InvalidParameterValueException("Specified parameter value for parameter \"" + Name +
+                                                               "\" breaches parameter constraint.\n" + result.ErrorMessage);
+                    }
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         public override bool Equals(object obj)
@@ -402,5 +405,5 @@ namespace Socona.ToolBox.Parametrization.Parameters
         }
 
     }
-      
+
 }

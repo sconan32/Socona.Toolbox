@@ -4,6 +4,7 @@ using Socona.ToolBox.Windows.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -59,10 +60,17 @@ namespace Socona.ToolBox.Windows.Parametrization
         ///</exception>
         public bool UseDefaultValue()
         {
-            return _parameter.UseDefaultValue();
+            var result = _parameter.UseDefaultValue();
+            RaisePropertyChanged(nameof(GivenValue));
+            RaisePropertyChanged(nameof(Value));
+            return result;
         }
 
-        object IParameter.DefaultValue { get => _parameter.DefaultValue; set => ((IParameter)_parameter).DefaultValue = value; }
+        object IParameter.DefaultValue
+        {
+            get => _parameter.DefaultValue;
+            set => ((IParameter)_parameter).DefaultValue = value;
+        }
 
 
 
@@ -101,7 +109,19 @@ namespace Socona.ToolBox.Windows.Parametrization
         /// </summary>
         public object GivenValue
         {
-            get => _parameter.GivenValue;
+            get
+            {
+                if (_parameter.IsValid)
+                {
+                    return _parameter.GivenValue;
+                }
+                else
+                {
+                    _parameter.UseDefaultValue();
+                    return _parameter.GivenValue;
+                }
+
+            }
             set
             {
                 _parameter.GivenValue = value;
@@ -109,6 +129,11 @@ namespace Socona.ToolBox.Windows.Parametrization
                 if (_parameter.TrySetValue(value))
                 {
                     RaisePropertyChanged(nameof(Value));
+                }
+                ValidationErrors.Clear();
+                foreach(var err in  _parameter.ValidateErrors)
+                {
+                    ValidationErrors.Add(err);
                 }
             }
         }
@@ -140,7 +165,8 @@ namespace Socona.ToolBox.Windows.Parametrization
 
         object IParameter.Value
         {
-            get => _parameter.Value; set
+            get => _parameter.Value;
+            set
             {
                 _parameter.SetValue(value);
                 RaisePropertyChanged();
@@ -196,6 +222,8 @@ namespace Socona.ToolBox.Windows.Parametrization
                 return DisplayStyleEnum.Text;
             }
         }
+
+        public ObservableCollection<string> ValidationErrors => new ObservableCollection<string>();
 
         public override string ToString()
         {
