@@ -46,7 +46,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         public bool IsFalse => IsValid && !Value;
 
 
-        public static new BoolParameter FromPropertyName(string propertyName, Type inType)
+        public static  BoolParameter FromPropertyName(string propertyName, Type inType)
         {
             return (BoolParameter)ValueTypeParameter<bool>.FromPropertyName(propertyName, inType);
         }
