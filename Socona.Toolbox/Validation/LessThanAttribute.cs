@@ -22,7 +22,6 @@ namespace Socona.ToolBox.Validation
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-
             var otherProperty = validationContext.ObjectType.GetProperty(_otherPropertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             if (otherProperty != null)
             {
@@ -39,7 +38,6 @@ namespace Socona.ToolBox.Validation
                     }
                 }
             }
-
             return new ValidationResult(this.FormatErrorMessage(validationContext?.DisplayName ?? string.Empty)); ;
         }
     }
