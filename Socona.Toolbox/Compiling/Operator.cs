@@ -135,7 +135,7 @@ namespace Socona.ToolBox.Compiling
     }
 
 
-    public enum OperatorType : uint
+    public enum OperatorType : int
     {
         Reference = 1,  //访问对象
         /* 算数运算 */
@@ -164,6 +164,6 @@ namespace Socona.ToolBox.Compiling
         Not,           // 非  
                        /* 赋值 */
         Assignment,    // 赋值  
-        END_STACK = 0xFFFFFFFF,   // 栈底  
+        END_STACK = 0x7FFFFFFF,   // 栈底  
     }
 }

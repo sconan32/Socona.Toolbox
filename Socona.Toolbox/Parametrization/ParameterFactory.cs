@@ -123,8 +123,11 @@ namespace Socona.ToolBox.Parametrization
             IParameter result = null;
             if (type == typeof(int))
             {                
-                result = new IntParameter(oa, isRequired, defaultValue as int?, candidates?.OfType<int>());
-                
+                result = new IntParameter(oa, isRequired, defaultValue as int?, candidates?.OfType<int>());                
+            }
+            else if (type == typeof(string))
+            {
+                result = new StringParameter(oa, isRequired, defaultValue as string, candidates?.OfType<string>());
             }
             else if (type == typeof(bool))
             {

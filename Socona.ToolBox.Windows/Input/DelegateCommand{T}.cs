@@ -24,12 +24,7 @@ namespace Socona.ToolBox.Windows.Input
 
         public DelegateCommand(Action<T> executeAction, Func<T, bool> canExecute = null)
         {
-            if (executeAction == null)
-            {
-                throw new ArgumentNullException(nameof(executeAction));
-            }
-
-            commandExecuteAction = executeAction;
+            commandExecuteAction = executeAction ?? throw new ArgumentNullException(nameof(executeAction));
             commandCanExecute = canExecute ?? (e => true);
         }
 

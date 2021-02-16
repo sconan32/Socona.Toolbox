@@ -48,10 +48,17 @@ namespace Socona.ToolBox.Uwp.Extensions
         }
         public static async Task SaveSoftwareBitmapToFile(this SoftwareBitmap softwareBitmap, StorageFile outputFile)
         {
+            var propertySet = new BitmapPropertySet();
+            var qualityValue = new BitmapTypedValue(
+                1.0, //Maximum
+                global::Windows.Foundation.PropertyType.Single);
+            propertySet.Add("ImageQuality", qualityValue);
+
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
+
                 // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream, propertySet);
 
                 // Set the software bitmap
                 encoder.SetSoftwareBitmap(softwareBitmap);

@@ -133,8 +133,8 @@ namespace Socona.ToolBox.Tools
             /// <param name="count">The number of bits to add</param>
             public void AddBytes(long count)
             {
-                long currentTotal = 0;
-                long newtotal = 0;
+                long currentTotal;
+                long newtotal;
                 do
                 {
                     currentTotal = Totalbytes;
@@ -181,7 +181,7 @@ namespace Socona.ToolBox.Tools
                 if (gbyte > 0)
                 {
                     var ret = gbyte + (double)mbyte / 1024;
-                    ret = ret / (DateTime.Now - LastRead).TotalSeconds;
+                    ret /= (DateTime.Now - LastRead).TotalSeconds;
 
                     LastRead = DateTime.Now;
                     var s = ret.ToString("#0.00");
@@ -193,7 +193,7 @@ namespace Socona.ToolBox.Tools
                 if (mbyte > 0)
                 {
                     var ret = mbyte + (double)kbyte / 1024;
-                    ret = ret / (DateTime.Now - LastRead).TotalSeconds;
+                    ret /= (DateTime.Now - LastRead).TotalSeconds;
 
                     LastRead = DateTime.Now;
                     var s = ret.ToString("#0.00");
@@ -206,7 +206,7 @@ namespace Socona.ToolBox.Tools
                 if (kbyte > 0)
                 {
                     var ret = kbyte + (double)nbyte / 1024;
-                    ret = ret / (DateTime.Now - LastRead).TotalSeconds;
+                    ret /= (DateTime.Now - LastRead).TotalSeconds;
                     LastRead = DateTime.Now;
                     var s = ret.ToString("#0.00");
 
@@ -215,7 +215,7 @@ namespace Socona.ToolBox.Tools
                 else
                 {
                     double ret = nbyte;
-                    ret = ret / (DateTime.Now - LastRead).TotalSeconds;
+                    ret /= (DateTime.Now - LastRead).TotalSeconds;
                     LastRead = DateTime.Now;
                     var s = ret.ToString("#0.00");
 

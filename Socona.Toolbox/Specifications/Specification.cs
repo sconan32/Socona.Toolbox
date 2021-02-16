@@ -140,5 +140,10 @@ namespace Socona.ToolBox.Specifications
         {
             return Prepare(query);
         }
+
+        public bool IsSatisfied(T item)
+        {
+            return Criteria.Compile().Invoke(item);
+        }
     }
 }

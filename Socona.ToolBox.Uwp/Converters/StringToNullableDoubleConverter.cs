@@ -10,14 +10,21 @@ namespace Socona.ToolBox.Uwp.Converters
     public class StringToNullableDoubleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
-        { return value; }
+        {
+            return value?.ToString();
+        }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            double temp;
-            if (string.IsNullOrEmpty((string)value) || !double.TryParse((string)value, out temp)) return null;
-            else return temp;
+            double? temp = null;
+            if (value is string strValue)
+            {
+                if (double.TryParse(strValue, out double dval))
+                {
+                    temp = dval;
+                }
+            }
+            return temp;
         }
-
     }
 }

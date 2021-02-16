@@ -13,7 +13,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
     ///     算法中的参数
     /// </summary>
     /// <typeparam name="T">参数的值类型</typeparam>
-    public class Parameter<T> : IParameter
+    public class Parameter<T> : IParameter        
     {
         protected readonly List<ValidationAttribute> constraints;
 
@@ -60,7 +60,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
             this.FullName = optionID.FullName;
             this.isRequired = isRequired;
             this.defaultValue = defaultValue;
-            HasDefaultValue = (defaultValue != default);
+            HasDefaultValue = true;
             if (candidates != null)
             {
                 Candidates.AddRange(candidates);
@@ -344,7 +344,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public bool IsDefaultValue => isDefaultValue;
 
-        public bool IsEmpty => isDefaultValue || IsValid || Value != default;
+        public bool IsEmpty => isDefaultValue || IsValid || !(Value.Equals(default(T)));
 
         public bool IsRequired => isRequired;
 
