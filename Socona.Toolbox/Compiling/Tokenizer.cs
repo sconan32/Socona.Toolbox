@@ -149,12 +149,11 @@ namespace Socona.ToolBox.Compiling
 
         public virtual TokenItem ReadNumber()
         {
-            string result = "";
             Regex regStr = new Regex(@"[+-]?\d+[.]?\d*", RegexOptions.Compiled);
             var match = regStr.Match(_input, _idx);
             if (match.Success)
             {
-                result = match.Value;
+                string result = match.Value;
                 _idx += result.Length;
                 return new TokenItem { Type = TokenType.StringLiteral, TokenString = result, };
             }

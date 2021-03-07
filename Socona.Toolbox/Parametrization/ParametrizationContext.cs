@@ -1,5 +1,5 @@
 ﻿using Microsoft.Collections.Extensions;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using Socona.ToolBox.Parametrization.Parameters;
 using System;
 using System.Collections.Generic;
@@ -91,14 +91,14 @@ namespace Socona.ToolBox.Parametrization
             }
         }
 
-        public string SerializeToJson()
-        {
-            return JsonConvert.SerializeObject(_rootInstance);
-        }
+        //public string SerializeToJson()
+        //{
+        //    return JsonConvert.SerializeObject(_rootInstance);
+        //}
 
-        public ISettings DeserializeFromJson(string text)
-        {
-            return  (ISettings)JsonConvert.DeserializeObject(text, _rootInstanceType);
-        }
+        //public ISettings DeserializeFromJson(string text)
+        //{
+        //    return  (ISettings)JsonConvert.DeserializeObject(text, _rootInstanceType);
+        //}
     }
 }
