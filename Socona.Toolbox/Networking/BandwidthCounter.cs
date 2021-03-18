@@ -1,29 +1,37 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Socona.ToolBox.Tools
 {
     public class BandwidthCounter
     {
-        private MiniCounter perSecond;
-        public long totalbytes;
+        private MiniCounter _perSecond;
+        private long _totalBytes;
+
+        public long TotalBytes => _totalBytes;
 
         /// <summary>
         ///     Empty constructor, because thats constructive
         /// </summary>
         public BandwidthCounter()
         {
-            perSecond = new MiniCounter { LastRead = DateTime.Now, Totalbytes = 0 };
+            _perSecond = new MiniCounter { LastRead = DateTime.Now, Totalbytes = 0 };
         }
 
         /// <summary>
         ///     Accesses the current transfer rate, returning the text
         /// </summary>
         /// <returns></returns>
-        public string GetPerSecond()
+        public string GetPerSecondString()
         {
-            var s = perSecond + "/s";
-            perSecond = new MiniCounter { LastRead = DateTime.Now, Totalbytes = 0 };
+            return $"{ToUserString(GetPerSecond())}/s";
+        }
+
+        public long GetPerSecond()
+        {
+            var s = _perSecond.PerSecond;
+            _perSecond = new MiniCounter { LastRead = DateTime.Now, Totalbytes = 0 };
             return s;
         }
 
@@ -37,11 +45,11 @@ namespace Socona.ToolBox.Tools
             long newtotal;
             do
             {
-                currentTotal = totalbytes;
+                currentTotal = TotalBytes;
                 newtotal = currentTotal + count;
-            } while (Interlocked.CompareExchange(ref totalbytes, newtotal, currentTotal) != currentTotal);
+            } while (Interlocked.CompareExchange(ref _totalBytes, newtotal, currentTotal) != currentTotal);
             // overflow max
-            perSecond.AddBytes(count);
+            _perSecond.AddBytes(count);
         }
 
         /// <summary>
@@ -50,67 +58,9 @@ namespace Socona.ToolBox.Tools
         /// <returns></returns>
         public override string ToString()
         {
-            long curtotal = totalbytes;
-
-            var pbyte = curtotal / (1024L * 1024 * 1024 * 1024 * 1024);
-            curtotal %= (1024L * 1024 * 1024 * 1024 * 1024);
-            var tbyte = curtotal / (1024L * 1024 * 1024 * 1024);
-            if (pbyte > 0)
-            {
-                var ret = pbyte + (double)tbyte / 1024;
-                var s = ret.ToString("#0.000");
-
-                return s + " PB";
-            }
-            curtotal %= (1024L * 1024 * 1024 * 1024);
-            var gbyte = curtotal / (1024 * 1024 * 1024);
-            if (tbyte > 0)
-            {
-                var ret = tbyte + (double)gbyte / 1024;
-
-                var s = ret.ToString("#0.000");
-
-                return s + " TB";
-            }
-
-            curtotal %= (1024L * 1024 * 1024);
-            var mbyte = curtotal / (1024 * 1024);
-            if (gbyte > 0)
-            {
-                var ret = gbyte + (double)mbyte / 1024;
-                var s = ret.ToString("#0.000");
-
-                return s + " GB";
-            }
-
-            curtotal %= (1024 * 1024);
-            var kbyte = curtotal / 1024;
-
-            if (mbyte > 0)
-            {
-                var ret = mbyte + (double)kbyte / 1024;
-
-                var s = ret.ToString("#0.000");
-
-                return s + " MB";
-            }
-            var nbyte = curtotal % 1024;
-
-            if (kbyte > 0)
-            {
-                var ret = kbyte + (double)nbyte / 1024;
-
-                var s = ret.ToString("#0.000");
-
-                return s + " KB";
-            }
-            else
-            {
-                var s = nbyte.ToString("#0.000");
-
-                return s + " B";
-            }
+            return ToUserString(TotalBytes);
         }
+
 
         /// <summary>
         ///     Class to manage an adapters current transfer rate
@@ -140,8 +90,9 @@ namespace Socona.ToolBox.Tools
                     currentTotal = Totalbytes;
                     newtotal = currentTotal + count;
                 } while (Interlocked.CompareExchange(ref totalbytes, newtotal, currentTotal) != currentTotal);
-                // Totalbytes += count;
             }
+
+            public long PerSecond => (long)(Totalbytes / ((DateTime.Now - LastRead).TotalSeconds +float.Epsilon));
 
             /// <summary>
             ///     Returns the bits per second since the last time this function was called
@@ -149,78 +100,39 @@ namespace Socona.ToolBox.Tools
             /// <returns></returns>
             public override string ToString()
             {
-                var curtotal = Totalbytes;
-
-                var pbyte = curtotal / (1024L * 1024 * 1024 * 1024 * 1024);
-                curtotal %= (1024L * 1024 * 1024 * 1024 * 1024);
-                var tbyte = curtotal / (1024L * 1024 * 1024 * 1024);
-                if (pbyte > 0)
-                {
-                    var ret = pbyte + (double)tbyte / 1024;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.000");
-
-                    return s + " PB";
-                }
-                curtotal %= (1024L * 1024 * 1024 * 1024);
-                var gbyte = curtotal / (1024 * 1024 * 1024);
-                if (tbyte > 0)
-                {
-                    var ret = tbyte + (double)gbyte / 1024;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.00");
-
-                    return s + " TB";
-                }
-                curtotal %= (1024 * 1024 * 1024);
-                var mbyte = curtotal / (1024 * 1024);
-                if (gbyte > 0)
-                {
-                    var ret = gbyte + (double)mbyte / 1024;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.00");
-
-                    return s + " GB";
-                }
-                curtotal %= (1024 * 1024);
-                var kbyte = curtotal / 1024;
-                if (mbyte > 0)
-                {
-                    var ret = mbyte + (double)kbyte / 1024;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.00");
-
-                    return s + " MB";
-                }
-                var nbyte = curtotal % 1024;
-
-
-                if (kbyte > 0)
-                {
-                    var ret = kbyte + (double)nbyte / 1024;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.00");
-
-                    return s + " KB";
-                }
-                else
-                {
-                    double ret = nbyte;
-                    ret /= (DateTime.Now - LastRead).TotalSeconds;
-                    LastRead = DateTime.Now;
-                    var s = ret.ToString("#0.00");
-
-                    return s + " B";
-                }
+                return ToUserString(PerSecond);
+            }
+        }
+        public static string ToUserString(long totalbytes)
+        {
+            var pbyte = totalbytes >> 50;
+            var tbyte = totalbytes >> 40;
+            if (pbyte > 0)
+            {
+                return $"{(double)tbyte / 1024:F2} PB";
+            }
+            var gbyte = totalbytes >> 30;
+            if (tbyte > 0)
+            {
+                return $"{(double)gbyte / 1024:F2} TB";
+            }
+            var mbyte = totalbytes >> 20;
+            if (gbyte > 0)
+            {
+                return $"{(double)mbyte / 1024:F2} GB";
+            }
+            var kbyte = totalbytes >> 10;
+            if (mbyte > 0)
+            {
+                return $"{(double)kbyte / 1024:F2} MB";
+            }
+            if (kbyte > 0)
+            {
+                return $"{(double)totalbytes / 1024:F2} KB"; ;
+            }
+            else
+            {
+                return $"{totalbytes} B";
             }
         }
     }

@@ -13,7 +13,6 @@ namespace Socona.ToolBox.Text
 
         public PatternCollection(IEnumerable<string> keywords)
         {
-
             _keywords = keywords.ToArray();
             Initialize();
         }
@@ -28,15 +27,7 @@ namespace Socona.ToolBox.Text
                 var node = _root;
                 foreach (var ch in keyword)
                 {
-                    Node temp = null;
-                    foreach (var tnode in node.Transitions)
-                    {
-                        if (tnode.Char == ch)
-                        {
-                            temp = tnode;
-                            break;
-                        }
-                    }
+                    Node temp = node.GetTransition(ch);
                     if (temp == null)
                     {
                         temp = new Node(ch, node);
@@ -44,50 +35,85 @@ namespace Socona.ToolBox.Text
                     }
                     node = temp;
                 }
-                node.AddResult(keyword);
+                node.Result = keyword;
             }
 
-            // 第一层失败指向根节点
-            var nodes = new List<Node>();
+            //BFS 第一层失败指向根节点
+            var nodes = new Queue<Node>();
             foreach (var node in _root.Transitions)
             {
                 // 失败指向root
                 node.Failure = _root;
-                foreach (var trans in node.Transitions) nodes.Add(trans);
+                foreach (var trans in node.Transitions)
+                {
+                    nodes.Enqueue(trans);
+                }
             }
 
             // 其它节点 BFS
             while (nodes.Count != 0)
             {
-                var newNodes = new List<Node>();
-                foreach (var nd in nodes)
+                var nd = nodes.Dequeue();
+                foreach (var child in nd.Transitions)
                 {
-                    var r = nd.Parent.Failure;
-                    var c = nd.Char;
-
-                    while (r != null && !r.ContainsTransition(c)) r = r.Failure;
-
-                    if (r == null)
+                    nodes.Enqueue(child);
+                    Node failure = nd.Failure;//从当前孩子的公共子序列找起
+                    while (true)
                     {
-                        // 失败指向root
-                        nd.Failure = _root;
+                        if (failure == null) //只有根节点的Failure为null
+                        {
+                            child.Failure = _root;
+                            break;
+                        }
+
+                        if (failure.ContainsTransition(child.Char)) //含有公共前缀
+                        {
+                            child.Failure = failure.GetTransition(child.Char);
+                            break;
+                        }
+                        else //继续向上寻找
+                        {
+                            failure = failure.Failure;
+                        }
                     }
-                    else
-                    {
-                        nd.Failure = r.GetTransition(c);
-                        foreach (var result in nd.Failure.Results) nd.AddResult(result);
-                    }
-                    foreach (var child in nd.Transitions) newNodes.Add(child);
                 }
-                nodes = newNodes;
             }
             // 根节点的失败指向自己
-            _root.Failure = _root;
+            // _root.Failure = _root;
         }
 
         public bool IsMatchAny(string text)
         {
-            return FindAllKeywords(text).Count > 0;
+            var current = _root;
+            for (var index = 0; index < text.Length; ++index)
+            {
+                char ch = text[index];
+                var trans = current.GetTransition(ch);
+                if (trans != null)
+                {
+                    current = trans;
+
+                    if (current.HasKeyword)
+                    {
+                        return true;
+                    }
+                    if (current.Failure != null && current.Failure.HasKeyword)
+                    {
+                        return true;
+                    }
+                    index++;
+                }
+                else
+                {
+                    current = current.Failure;
+                    if (current == null)
+                    {
+                        current = _root;
+                        index++;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -102,24 +128,36 @@ namespace Socona.ToolBox.Text
             var current = _root;
             for (var index = 0; index < text.Length; ++index)
             {
-                Node trans;
-                do
+                char ch = text[index];
+                var trans = current.GetTransition(ch);
+                if (trans != null)
                 {
-                    trans = current.GetTransition(text[index]);
+                    current = trans;
 
-                    if (current == _root)
-                        break;
-
-                    if (trans == null) current = current.Failure;
-                } while (trans == null);
-
-                if (trans != null) current = trans;
-
-                foreach (var s in current.Results) list.Add(new KeywordSearchResult(index - s.Length + 1, s));
+                    if (current.HasKeyword)
+                    {
+                        list.Add(new KeywordSearchResult(index - current.Result.Length + 1, current.Result));
+                    }
+                    if (current.Failure != null & current.Failure.HasKeyword)
+                    {
+                        list.Add(new KeywordSearchResult(index - current.Failure.Result.Length + 1, current.Failure.Result));
+                    }
+                    index++;
+                }
+                else
+                {
+                    current = current.Failure;
+                    if (current.Failure == null)
+                    {
+                        current = _root;
+                        index++;
+                    }
+                }
             }
 
             return list;
         }
+
 
         /// <summary>
         ///     构造节点
@@ -132,8 +170,6 @@ namespace Socona.ToolBox.Text
             {
                 Char = c;
                 Parent = parent;
-                Results = new List<string>();
-               
                 transDict = new Dictionary<char, Node>();
             }
 
@@ -155,24 +191,19 @@ namespace Socona.ToolBox.Text
                 }
             }
 
-            public List<string> Results { get; }
+            public bool HasKeyword => !string.IsNullOrEmpty(Result);
 
-            public void AddResult(string result)
-            {
-                if (!Results.Contains(result)) Results.Add(result);
-            }
+
+            public string Result { get; set; }
 
             public void AddTransition(Node node)
             {
-                transDict.Add(node.Char, node);            
+                transDict.Add(node.Char, node);
             }
 
             public Node GetTransition(char c)
             {
-                Node node;
-                if (transDict.TryGetValue(c, out node)) return node;
-
-                return null;
+                return transDict.TryGetValue(c, out Node node) ? node : null;
             }
 
             public bool ContainsTransition(char c)
@@ -181,7 +212,6 @@ namespace Socona.ToolBox.Text
             }
         }
     }
-
 
 
 
