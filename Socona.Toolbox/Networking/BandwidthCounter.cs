@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Socona.ToolBox.Tools
@@ -128,7 +127,7 @@ namespace Socona.ToolBox.Tools
             }
             if (kbyte > 0)
             {
-                return $"{(double)totalbytes / 1024:F2} KB"; ;
+                return $"{(double)totalbytes / 1024:F2} KB"; 
             }
             else
             {

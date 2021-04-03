@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Socona.ToolBox.Windows\Socona.ToolBox.Windows.csproj" />
     <ProjectReference Include="..\Socona.Toolbox\Socona.ToolBox.csproj" />
   </ItemGroup>
 </Project>
