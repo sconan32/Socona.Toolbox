@@ -36,12 +36,12 @@ namespace Socona.ToolBox.Parametrization.Parameters
         }
 
         ///<summary>
-        /// Shorthand for <code>IsValid && IsValid == true</code>
+        /// Shorthand for <code>IsValid && Value == true</code>
         /// </summary>
-        public bool IsTrue => IsValid && IsValid;
+        public bool IsTrue => IsValid && Value;
 
         ///<summary>
-        /// Shorthand for <code>IsValid && IsValid == false</code>
+        /// Shorthand for <code>IsValid && (Value == false)</code>
         /// </summary>
         public bool IsFalse => IsValid && !Value;
 

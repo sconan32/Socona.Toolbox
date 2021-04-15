@@ -227,7 +227,7 @@ namespace Socona.ToolBox.Windows.Parametrization
 
         public override string ToString()
         {
-            return $"Bindable Proxy of Parameter [{_parameter.ToString()}]";
+            return $"Bindable Proxy of Parameter [{_parameter}]";
         }
 
         public string GetFullDescription()

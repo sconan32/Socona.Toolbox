@@ -39,7 +39,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         /// <summary>
         /// For Value type
         /// </summary>
-        protected T _value;
+        protected T value;
 
         protected List<string> _validationErrors = new List<string>();
         public IEnumerable<string> ValidateErrors => _validationErrors;
@@ -216,10 +216,10 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public virtual T Value
         {
-            get { return _value; }
+            get { return value; }
             set
             {
-                _value = value;
+                this.value = value;
                 givenValue = value;
                 IsValid = true;
             }
@@ -266,10 +266,10 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<returns>Value as string</returns>
         public virtual string GetValueAsString()
         {
-            return _value?.ToString();
+            return value?.ToString();
         }
 
-        object IParameter.Value { get => _value; set => SetValue(value); }
+        object IParameter.Value { get => value; set => SetValue(value); }
 
         IEnumerable IParameter.Candidates => Candidates;
 
