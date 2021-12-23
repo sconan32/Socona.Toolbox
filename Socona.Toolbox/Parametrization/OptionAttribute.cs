@@ -11,8 +11,8 @@ namespace Socona.ToolBox.Parametrization
     [AttributeUsage(AttributeTargets.Property|AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class OptionAttribute : Attribute
     {
-        private string helpText;
-        private string metaValue;
+       // private string helpText;
+      //  private string metaValue;
         private readonly string _fullName;
         private readonly string _name;
         private string setName;

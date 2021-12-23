@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>Socona.ToolBox.WinUI</RootNamespace>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.0" />
-      <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.5.0" />
-      <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.5.0" />
+      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
+      <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.194" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Socona.ToolBox.Windows\Socona.ToolBox.Windows.csproj" />
     <ProjectReference Include="..\Socona.Toolbox\Socona.ToolBox.csproj" />
   </ItemGroup>
 </Project>

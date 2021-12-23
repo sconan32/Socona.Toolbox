@@ -13,15 +13,15 @@ namespace Socona.ToolBox.Text
 
         public override TokenItem NextToken()
         {
-            while (_idx < _input.Length && (
-                _input[_idx] == ' '
-                || _input[_idx] == '　'
-                || _input[_idx] == '\t'
-                || _input[_idx] == '\n'))
-            { _idx++; }
-            if (_idx >= _input.Length)
+            while (Index < Input.Length && (
+                Input[Index] == ' '
+                || Input[Index] == '　'
+                || Input[Index] == '\t'
+                || Input[Index] == '\n'))
+            { Index++; }
+            if (Index >= Input.Length)
             {
-                _errors.Add(new TokenizeError() { Start = _idx, Length = 0, Type = TokenizeErrorType.IndexOutOfRange });
+                Errors.Add(new TokenizeError() { Start = Index, Length = 0, Type = TokenizeErrorType.IndexOutOfRange });
                 return null;
             }
             TokenItem token = ReadOperator() ?? ReadLiteral();

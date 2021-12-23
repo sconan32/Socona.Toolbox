@@ -10,6 +10,6 @@ namespace Socona.ToolBox
         private NullType()
         {
         }
-        public static readonly NullType<T> Instance = new NullType<T>();
+        public static NullType<T> Instance { get; } = new NullType<T>();
     }
 }

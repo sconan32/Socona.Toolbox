@@ -8,15 +8,15 @@ namespace Socona.ToolBox.Compiling
 {
     public abstract class Tokenizer
     {
-        protected string _input;
+        protected string Input;
 
-        protected int _idx;
+        protected int Index;
 
-        protected List<TokenizeError> _errors = new List<TokenizeError>();
+        protected List<TokenizeError> Errors = new List<TokenizeError>();
 
         public bool HasError
         {
-            get { return _errors.Count > 0; }
+            get { return Errors.Count > 0; }
         }
 
         public bool HasNext
@@ -25,104 +25,104 @@ namespace Socona.ToolBox.Compiling
         }
         public Tokenizer(string input)
         {
-            _input = input + "$";
-            _idx = 0;
+            Input = input + "$";
+            Index = 0;
             HasNext = true;
         }
         //分析运算符
         public virtual TokenItem ReadOperator()
         {
-            if (_input[_idx] == ':')
+            if (Input[Index] == ':')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Reference);
             }
-            else if (_input[_idx] == '(')
+            else if (Input[Index] == '(')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.LParen);
             }
-            else if (_input[_idx] == ')')
+            else if (Input[Index] == ')')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.RParen);
             }
-            else if (_input[_idx] == '+')
+            else if (Input[Index] == '+')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Plus);
             }
-            else if (_input[_idx] == '-')
+            else if (Input[Index] == '-')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Minus);
             }
-            else if (_input[_idx] == '*')
+            else if (Input[Index] == '*')
             {
-                if (_input[_idx + 1] == '*')
+                if (Input[Index + 1] == '*')
                 {
-                    _idx += 2;
+                    Index += 2;
                     return new TokenItem(OperatorType.Power);
                 }
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Multiply);
             }
-            else if (_input[_idx] == '/')
+            else if (Input[Index] == '/')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Divide);
             }
-            else if (_input[_idx] == '%')
+            else if (Input[Index] == '%')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Minus);
             }
-            else if (_input[_idx] == '*')
+            else if (Input[Index] == '*')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Multiply);
             }
-            else if (_input[_idx] == '<')
+            else if (Input[Index] == '<')
             {
-                if (_input[_idx + 1] == '=')
+                if (Input[Index + 1] == '=')
                 {
-                    _idx += 2;
+                    Index += 2;
                     return new TokenItem(OperatorType.Le);
                 }
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Lt);
             }
-            else if (_input[_idx] == '>')
+            else if (Input[Index] == '>')
             {
-                if (_input[_idx + 1] == '=')
+                if (Input[Index + 1] == '=')
                 {
-                    _idx += 2;
+                    Index += 2;
                     return new TokenItem(OperatorType.Ge);
                 }
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Gt);
             }
-            else if (_input[_idx] == '!')
+            else if (Input[Index] == '!')
             {
-                if (_input[_idx + 1] == '=')
+                if (Input[Index + 1] == '=')
                 {
-                    _idx += 2;
+                    Index += 2;
                     return new TokenItem(OperatorType.Ne);
                 }
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Not);
             }
-            else if (_input[_idx] == '=')
+            else if (Input[Index] == '=')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.Eq);
             }
-            else if (_input[_idx] == '~')
+            else if (Input[Index] == '~')
             {
-                _idx++;
+                Index++;
                 return new TokenItem(OperatorType.FuzzyEq);
             }
-            else if (_input[_idx] == '$')
+            else if (Input[Index] == '$')
             {
                 HasNext = false;
                 return new TokenItem(OperatorType.END_STACK);
@@ -138,11 +138,11 @@ namespace Socona.ToolBox.Compiling
         {
             string result = "";
             Regex regStr = new Regex(@"[\p{IsCJKUnifiedIdeographs}A-Za-z][\p{IsCJKUnifiedIdeographs}A-Za-z0-9]*", RegexOptions.Compiled);
-            var match = regStr.Match(_input, _idx);
+            var match = regStr.Match(Input, Index);
             if (match.Success)
             {
                 result = match.Value;
-                _idx += result.Length;
+                Index += result.Length;
             }
             return new TokenItem { Type = TokenType.StringLiteral, TokenString = result, };
         }
@@ -150,11 +150,11 @@ namespace Socona.ToolBox.Compiling
         public virtual TokenItem ReadNumber()
         {
             Regex regStr = new Regex(@"[+-]?\d+[.]?\d*", RegexOptions.Compiled);
-            var match = regStr.Match(_input, _idx);
+            var match = regStr.Match(Input, Index);
             if (match.Success)
             {
                 string result = match.Value;
-                _idx += result.Length;
+                Index += result.Length;
                 return new TokenItem { Type = TokenType.StringLiteral, TokenString = result, };
             }
             return null;
@@ -175,10 +175,10 @@ namespace Socona.ToolBox.Compiling
             for (int i = 0; i < patterns.Length; i++)
             {
                 var regex = patterns[i];
-                var match = regex.Match(_input, _idx);
+                var match = regex.Match(Input, Index);
                 if (match.Success)
                 {
-                    _idx += match.Value.Length;
+                    Index += match.Value.Length;
                     var result = match.Groups["year"] + "/" + match.Groups["month"] + "/" + match.Groups["day"];
                     return new TokenItem { Type = TokenType.DateLiteral, TokenString = result, };
                 }
@@ -200,7 +200,7 @@ namespace Socona.ToolBox.Compiling
 
         public virtual void Failback(TokenItem token)
         {
-            _idx -= token.TokenString.Length;
+            Index -= token.TokenString.Length;
         }
     }
     public struct TokenizeError
