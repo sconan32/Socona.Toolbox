@@ -71,7 +71,7 @@ namespace Socona.Expor.Utilities.Options.Parameters
 
         public override string GetDefaultValueAsString()
         {
-            if (defaultValue == _DefaultValue)
+            if (m_defaultValue == _DefaultValue)
             {
                 return "<Global Random>";
             }

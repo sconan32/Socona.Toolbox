@@ -15,7 +15,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<summary>
         /// The restriction class for this class parameter.
         ///</summary>
-        protected Type baseType;
+        protected Type m_baseType;
 
         ///<summary>
         /// Constructs a class parameter with the given optionID, restriction class,
@@ -30,10 +30,10 @@ namespace Socona.ToolBox.Parametrization.Parameters
             params ValidationAttribute[] constraints) :
             base(optionID, isRequired, defaultValue, candidates, constraints)
         {
-            this.baseType = baseType;
-            if (this.baseType == null)
+            this.m_baseType = baseType;
+            if (this.m_baseType == null)
             {
-                this.baseType = typeof(object);
+                this.m_baseType = typeof(object);
             }
         }
 
@@ -58,7 +58,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
                         // Ignore, retry
                     }
                     // Last try: guessed name prefix only
-                    value = Type.GetType(baseType.Namespace + "." + valueString);
+                    value = Type.GetType(m_baseType.Namespace + "." + valueString);
                     return true;
                 }
                 catch (TypeLoadException)
@@ -84,11 +84,11 @@ namespace Socona.ToolBox.Parametrization.Parameters
                 }
                 return false;
             }
-            if (!baseType.IsAssignableFrom(obj))
+            if (!m_baseType.IsAssignableFrom(obj))
             {
                 if (throwIfFailed)
                 {
-                    throw new InvalidParameterValueException(this, obj.Name, "Given class not a subclass / implementation of " + baseType.Name);
+                    throw new InvalidParameterValueException(this, obj.Name, "Given class not a subclass / implementation of " + m_baseType.Name);
                 }
                 return false;
             }
@@ -155,7 +155,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<summary>
         /// Returns the restriction class of this class parameter.
         /// </summary>
-        public Type BaseType => baseType;
+        public Type BaseType => m_baseType;
 
 
         ///<summary>
@@ -164,7 +164,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<returns>List object</returns>
         public IEnumerable<Type> GetKnownImplementations()
         {
-            return baseType.GetAllImplementations();
+            return m_baseType.GetAllImplementations();
         }
 
         ///<summary>
@@ -177,7 +177,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         public String RestrictionString()
         {
             StringBuilder info = new StringBuilder();
-            if (baseType.IsInterface)
+            if (m_baseType.IsInterface)
             {
                 info.Append("Implementing ");
             }
@@ -185,13 +185,13 @@ namespace Socona.ToolBox.Parametrization.Parameters
             {
                 info.Append("Extending ");
             }
-            info.Append(baseType.Name);
+            info.Append(m_baseType.Name);
             info.Append(Environment.NewLine);
 
             var known = GetKnownImplementations();
             if (known.Any())
             {
-                info.Append("Known classes (default package " + baseType.Assembly.FullName + "):");
+                info.Append("Known classes (default package " + m_baseType.Assembly.FullName + "):");
                 info.Append(Environment.NewLine);
                 foreach (Type c in known)
                 {

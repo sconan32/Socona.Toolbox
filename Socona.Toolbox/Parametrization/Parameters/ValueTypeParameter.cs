@@ -12,7 +12,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
     public abstract class ValueTypeParameter<T> : Parameter<T>
     where T : struct
     {
-        protected bool hasDefaultValue = false;
+        protected bool m_hasDefaultValue = false;
 
         ///<summary>
         /// Constructs a number parameter with the given optionID, constraint, and
@@ -29,20 +29,20 @@ namespace Socona.ToolBox.Parametrization.Parameters
             IEnumerable<ValidationAttribute> constraints = null) :
             base(optionID, isRequired, defaultValue ?? default, candidates, constraints)
         {
-            hasDefaultValue = (defaultValue != null);
+            m_hasDefaultValue = (defaultValue != null);
         }
 
-        public override bool HasDefaultValue => hasDefaultValue;
+        public override bool HasDefaultValue => m_hasDefaultValue;
 
         public override T Value
         {
-            get => value;
+            get => m_value;
             set
             {
-                base.value = value;
+                base.m_value = value;
                 IsValid = true;
-                givenValue = value;
-                isDefaultValue = base.value.Equals(defaultValue);
+                m_givenValue = value;
+                m_isDefaultValue = base.m_value.Equals(m_defaultValue);
             }
         }
 

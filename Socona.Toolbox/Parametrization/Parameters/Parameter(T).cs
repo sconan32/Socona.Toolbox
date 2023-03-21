@@ -15,34 +15,34 @@ namespace Socona.ToolBox.Parametrization.Parameters
     /// <typeparam name="T">参数的值类型</typeparam>
     public class Parameter<T> : IParameter        
     {
-        protected readonly List<ValidationAttribute> constraints;
+        protected readonly List<ValidationAttribute> m_constraints;
 
-        protected readonly OptionAttribute option;
+        protected readonly OptionAttribute m_option;
 
-        protected T defaultValue = default;
+        protected T m_defaultValue = default;
 
-        protected object givenValue = default;
+        protected object m_givenValue = default;
         /// <summary>
         /// Identify a parameter if it is a necessary one. it can take a default value
         /// </summary>
-        protected bool isRequired = false;
+        protected bool m_isRequired = false;
 
         /// <summary>
         /// 
         /// </summary>
-        protected bool isOptional = false;
+        protected bool m_isOptional = false;
 
-        protected string description;
+        protected string m_description;
 
-        protected bool isDefaultValue;
+        protected bool m_isDefaultValue;
 
         /// <summary>
         /// For Value type
         /// </summary>
-        protected T value;
+        protected T m_value;
 
-        protected List<string> _validationErrors = new List<string>();
-        public IEnumerable<string> ValidateErrors => _validationErrors;
+        protected List<string> m_validationErrors = new List<string>();
+        public IEnumerable<string> ValidateErrors => m_validationErrors;
         ///<summary>
         /// Constructs a parameter with the given optionID, constraints, and default
         /// value.
@@ -53,40 +53,40 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="defaultValue">the default value of this parameter (may be null)</param>
         public Parameter(OptionAttribute optionID, bool isRequired = false, T defaultValue = default, IEnumerable<T> candidates = null, IEnumerable<ValidationAttribute> constraints = null)
         {
-            option = optionID;
-            description = optionID.Description;
+            m_option = optionID;
+            m_description = optionID.Description;
 
             this.Name = optionID.Name;
             this.FullName = optionID.FullName;
-            this.isRequired = isRequired;
-            this.defaultValue = defaultValue;
+            this.m_isRequired = isRequired;
+            this.m_defaultValue = defaultValue;
             HasDefaultValue = true;
             if (candidates != null)
             {
                 Candidates.AddRange(candidates);
             }
-            this.isOptional = HasDefaultValue;
-            this.constraints = new List<ValidationAttribute>();
+            this.m_isOptional = HasDefaultValue;
+            this.m_constraints = new List<ValidationAttribute>();
             if (constraints != null)
             {
-                this.constraints.AddRange(constraints);
+                this.m_constraints.AddRange(constraints);
             }
         }
 
         public T DefaultValue
         {
-            get { return defaultValue; }
+            get { return m_defaultValue; }
             set
             {
-                defaultValue = value;
-                isOptional = true;
+                m_defaultValue = value;
+                m_isOptional = true;
                 HasDefaultValue = true;
             }
         }
 
         public virtual string GetDefaultValueAsString()
         {
-            return defaultValue?.ToString();
+            return m_defaultValue?.ToString();
         }
 
         ///<summary>
@@ -108,9 +108,9 @@ namespace Socona.ToolBox.Parametrization.Parameters
             // Assume default value instead.
             if (HasDefaultValue)
             {
-                Value = defaultValue;
-                GivenValue = defaultValue;
-                isDefaultValue = true;
+                Value = m_defaultValue;
+                GivenValue = m_defaultValue;
+                m_isDefaultValue = true;
                 return true;
             }
             if (IsOptional)
@@ -121,7 +121,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
             throw new ParameterException($"{Name} is a required parameter, default value is not valid");
         }
 
-        object IParameter.DefaultValue { get => defaultValue; set => SetDefaultValue(value); }
+        object IParameter.DefaultValue { get => m_defaultValue; set => SetDefaultValue(value); }
 
         protected void SetDefaultValue(object value)
         {
@@ -141,7 +141,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         /// 
         /// </summary>
         ///<returns>true if this parameter is optional, false otherwise</returns>
-        public bool IsOptional => isOptional;
+        public bool IsOptional => m_isOptional;
 
 
         ///<summary>
@@ -173,7 +173,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<summary>
         /// Get the UserParameter of this option.        
         /// </summary>
-        public OptionAttribute Option => option;
+        public OptionAttribute Option => m_option;
 
         ///<summary>
         /// Get the name of the option.
@@ -187,8 +187,8 @@ namespace Socona.ToolBox.Parametrization.Parameters
         /// </summary>
         public virtual object GivenValue
         {
-            get => givenValue;
-            set { givenValue = value; TrySetValue(value); }
+            get => m_givenValue;
+            set { m_givenValue = value; TrySetValue(value); }
         }
 
 
@@ -211,16 +211,16 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<param name="constraint">Constraint to add.</param>
         public void AddConstraint(ValidationAttribute constraint)
         {
-            constraints.Add(constraint);
+            m_constraints.Add(constraint);
         }
 
         public virtual T Value
         {
-            get { return value; }
+            get { return m_value; }
             set
             {
-                this.value = value;
-                givenValue = value;
+                this.m_value = value;
+                m_givenValue = value;
                 IsValid = true;
             }
         }
@@ -246,13 +246,13 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public virtual bool TrySetValue(object obj)
         {
-            _validationErrors.Clear();
+            m_validationErrors.Clear();
             if (TryParse(obj, out T valT) && ValidateConstraints(valT, false))
             {
                 Value = valT;
                 return true;
             }
-            _validationErrors.Add("给定的值不合法");
+            m_validationErrors.Add("给定的值不合法");
             IsValid = false;
             return false;
         }
@@ -266,22 +266,22 @@ namespace Socona.ToolBox.Parametrization.Parameters
         ///<returns>Value as string</returns>
         public virtual string GetValueAsString()
         {
-            return value?.ToString();
+            return m_value?.ToString();
         }
 
-        object IParameter.Value { get => value; set => SetValue(value); }
+        object IParameter.Value { get => m_value; set => SetValue(value); }
 
         IEnumerable IParameter.Candidates => Candidates;
 
         protected virtual bool ValidateConstraints(T obj, bool throwIfFailed = true)
         {
 
-            foreach (var cons in constraints)
+            foreach (var cons in m_constraints)
             {
                 var result = cons.GetValidationResult(obj, new ValidationContext(this));
                 if (result != ValidationResult.Success)
                 {
-                    _validationErrors.Add(result.ErrorMessage);
+                    m_validationErrors.Add(result.ErrorMessage);
                     if (throwIfFailed)
                     {
                         throw new InvalidParameterValueException("Specified parameter value for parameter \"" + Name +
@@ -295,7 +295,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public override bool Equals(object obj)
         {
-            if ((obj as Parameter<T>)?.option.Equals(this.option) == true)
+            if ((obj as Parameter<T>)?.m_option.Equals(this.m_option) == true)
             {
                 return true;
             }
@@ -304,7 +304,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public override int GetHashCode()
         {
-            return option.GetHashCode();
+            return m_option.GetHashCode();
         }
 
         protected virtual T Parse(Object obj)
@@ -336,21 +336,21 @@ namespace Socona.ToolBox.Parametrization.Parameters
         /// </summary>
         public string Description
         {
-            get { return description; }
-            set { description = value; }
+            get { return m_description; }
+            set { m_description = value; }
         }
 
-        public IReadOnlyCollection<ValidationAttribute> Constraints => constraints;
+        public IReadOnlyCollection<ValidationAttribute> Constraints => m_constraints;
 
-        public bool IsDefaultValue => isDefaultValue;
+        public bool IsDefaultValue => m_isDefaultValue;
 
-        public bool IsEmpty => isDefaultValue || IsValid || !(Value.Equals(default(T)));
+        public bool IsEmpty => m_isDefaultValue || IsValid || !(Value.Equals(default(T)));
 
-        public bool IsRequired => isRequired;
+        public bool IsRequired => m_isRequired;
 
         public override string ToString()
         {
-            return $"{option.Name} : {this.GetType().Name} = {Value?.ToString() ?? "<null>"}({Description})";
+            return $"{m_option.Name} : {this.GetType().Name} = {Value?.ToString() ?? "<null>"}({Description})";
         }
 
         public virtual string PlaceHolder => $"<parameter of {typeof(T).Name}>";
@@ -380,25 +380,25 @@ namespace Socona.ToolBox.Parametrization.Parameters
                 description.Append(GetDefaultValueAsString());
                 description.Append(Environment.NewLine);
             }
-            if (constraints.Count > 0)
+            if (m_constraints.Count > 0)
             {
-                if (constraints.Count == 1)
+                if (m_constraints.Count == 1)
                 {
                     description.Append("Constraint: ");
                 }
-                else if (constraints.Count > 1)
+                else if (m_constraints.Count > 1)
                 {
                     description.Append("Constraints: ");
                 }
-                for (int i = 0; i < constraints.Count; i++)
+                for (int i = 0; i < m_constraints.Count; i++)
                 {
-                    var constraint = constraints[i];
+                    var constraint = m_constraints[i];
                     if (i > 0)
                     {
                         description.Append(", ");
                     }
                     description.Append(constraint.ToString());
-                    if (i == constraints.Count - 1)
+                    if (i == m_constraints.Count - 1)
                     {
                         description.Append(".");
                     }

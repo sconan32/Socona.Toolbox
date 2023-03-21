@@ -51,7 +51,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
 
         public override string ToString()
         {
-            return "Parameter:" + option.Name + " Type: List-of" + typeof(T).Name;
+            return "Parameter:" + m_option.Name + " Type: List-of" + typeof(T).Name;
         }
 
         ///<summary>

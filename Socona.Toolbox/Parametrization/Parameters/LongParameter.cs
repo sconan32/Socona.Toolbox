@@ -21,7 +21,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         public LongParameter(OptionAttribute optionID, bool isRequired = false, long? defaultValue = null, long[] candidates = null, params ValidationAttribute[] constraints) :
             base(optionID, isRequired, defaultValue ?? 0, candidates, constraints)
         {
-            hasDefaultValue = (defaultValue != null);
+            m_hasDefaultValue = (defaultValue != null);
         }
 
         protected override bool TryParse(object obj, out long value)

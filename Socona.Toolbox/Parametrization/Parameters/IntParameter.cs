@@ -17,7 +17,7 @@ namespace Socona.ToolBox.Parametrization.Parameters
         public IntParameter(OptionAttribute optionID, bool isRequired = false, int? defaultValue = null, IEnumerable<int> candidates = null, IEnumerable<ValidationAttribute> constraints = null) :
             base(optionID, isRequired, defaultValue ?? 0, candidates, constraints)
         {
-            hasDefaultValue = (defaultValue != null);
+            m_hasDefaultValue = (defaultValue != null);
         }
 
         protected override bool TryParse(object obj, out int value)
